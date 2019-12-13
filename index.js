@@ -129,18 +129,16 @@ function sendSlackMessageToChannel(slackChannel, slackMessage, pin_message) {
 }
 
 function getRequesteeSlackUserId(text) {
-    var requesteeId = '';
     try {
-        requesteeId = text
+        return text
             .split("<@")[1]
             .split("|")[0];
     } catch (e) {
         console.log(text, e);
     }
-    return requesteeId;
 }
 
-function buildReplyMessage(post, requesteeData) {
+function buildReplyMessage(requesteeData) {
     let message = "Hi! I asked a bit around about " + requesteeData.real_name +
         " and found out that " + requesteeData.real_name + " is ";
 
@@ -199,21 +197,25 @@ http.createServer(function (req, res) {
             // v3: Has requester filled in all details?
 
             // var incidentChannelId = await createIncidentFlow(post);
-            var requesteeData = await findSlackUserData(getRequesteeSlackUserId(post.text));
-            console.log("requesteeData");
-            console.log(requesteeData);
-            var requestorData = await findSlackUserData(post.user_id);
-            console.log("requestorData");
-            console.log(requestorData);
+            let requesteeUserId = getRequesteeSlackUserId(post.text);
+            if (requesteeUserId === undefined) {
+                respondWithMessage(res, "No Slack user found with this username. Try again");
+                return;
+            }
 
+            let requesteeData = await findSlackUserData(requesteeUserId);
             if (requesteeData === undefined) {
                 respondWithMessage(res, "No Slack user found with this username. Try again");
                 return;
             }
 
+            var requestorData = await findSlackUserData(post.user_id);
+            console.log("requestorData");
+            console.log(requestorData);
+
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.write(JSON.stringify({
-                text: buildReplyMessage(post, requesteeData)
+                text: buildReplyMessage(requesteeData)
             }));
             res.end();
         });
