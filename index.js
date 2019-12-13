@@ -184,7 +184,7 @@ function sendSlackMessageToChannel(slackChannel, slackMessage, pin_message) {
         });
 }
 
-function getUserId(post) {
+function getRequesteeId(post) {
     return post.text.split("<@")[1].split("|")[0];
 }
 
@@ -204,11 +204,11 @@ http.createServer(function (req, res) {
 
             verifySlackWebhook(post);
 
-            var userID = getUserId(post);
-            console.log(userID);
+            var requesteeId = getRequesteeId(post);
+            console.log(requesteeId);
 
 
-            // Is a Slack user mentioned in the message? (@requestee)
+
             // Find user data for @requestee (e.g. does requestee exists?)
             // Which data is available?
             // Parse data and concatenated message back to requester
