@@ -92,7 +92,7 @@ function buildReplyMessage(requesteeData, userCustomFields) {
     }
 
     if (userCustomFields.orgname !== '') {
-        message += "in " + userCustomFields.orgname + ", ";
+        message += "in " + userCustomFields.orgName + ", ";
     }
 
     if (userCustomFields.officeLocation !== '') {
