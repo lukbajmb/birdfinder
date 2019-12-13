@@ -106,25 +106,6 @@ function sendSlackMessageToChannel(slackChannel, slackMessage, pin_message) {
                 console.error('Sending message to Slack channel failed:', error);
                 throw new Error('Sending message to Slack channel failed');
             }
-            if (pin_message) {
-                var ts = body['ts'];
-                var channel = body['channel'];
-                request.post({
-                        url: 'https://slack.com/api/pins.add',
-                        auth: {
-                            'bearer': process.env.SLACK_API_TOKEN
-                        },
-                        json: {
-                            'channel': channel,
-                            'timestamp': ts
-                        }
-                    }, (error, response) => {
-                        if (error) {
-                            console.log('Error pinning message to channel: ' + error);
-                        }
-                    }
-                );
-            }
         });
 }
 
