@@ -165,11 +165,9 @@ function buildReplyMessage(requesteeData) {
     return message;
 }
 
-function respondWithMessage(res, message) {
+function respondWithMessage(res, messageObject) {
     res.writeHead(200, {'Content-Type': 'application/json'});
-    res.write(JSON.stringify({
-        text: message
-    }));
+    res.write(JSON.stringify(messageObject));
     res.end();
 }
 
@@ -215,9 +213,6 @@ http.createServer(function (req, res) {
 
             verifySlackWebhook(post);
 
-            // Which data is available?
-            // Parse data and concatenated message back to requester
-
             // v2: When not all data is available for requestee, ask the requester if requestee should be informed about this
             // v2: Inform requestee to fill in more data
 
@@ -227,13 +222,17 @@ http.createServer(function (req, res) {
             // var incidentChannelId = await createIncidentFlow(post);
             let requesteeUserId = getRequesteeSlackUserId(post.text);
             if (requesteeUserId === undefined) {
-                respondWithMessage(res, "No Slack user found with this username. Try again");
+                respondWithMessage(res, {
+                    text: "You did not send a Slack Display name. The correct format is: `/" + post.command + " @display_name`"
+                });
                 return;
             }
 
             let requesteeData = await findSlackUserData(requesteeUserId);
             if (requesteeData === undefined) {
-                respondWithMessage(res, "No Slack user found with this username. Try again");
+                respondWithMessage(res, {
+                    text: "No Slack user found with this username. Try again"
+                });
                 return;
             }
             let requesteeCustomFields = getUserCustomFields(requesteeData);
@@ -245,11 +244,7 @@ http.createServer(function (req, res) {
             console.log(requestorCustomFields);
 
 
-            res.writeHead(200, {'Content-Type': 'application/json'});
-            res.write(JSON.stringify({
-                text: buildReplyMessage(requesteeData)
-            }));
-            res.end();
+            respondWithMessage(res, {text: buildReplyMessage(requesteeData)});
         });
     } catch (error) {
         console.log(error);
