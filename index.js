@@ -4,6 +4,8 @@ const http = require('http');
 const qs = require('querystring');
 const request = require('request');
 const moment = require('moment');
+const Parser = require("simple-text-parser");
+var parser = new Parser();
 var rp = require('request-promise');
 
 const JoinDateFieldName = 'Xf59UWGT47';
@@ -182,6 +184,10 @@ function sendSlackMessageToChannel(slackChannel, slackMessage, pin_message) {
         });
 }
 
+function getUserId(post) {
+    return post.text.split("<@")[1].split("|")[0];
+}
+
 http.createServer(function (req, res) {
     try {
         verifyPostRequest(req.method);
@@ -197,6 +203,10 @@ http.createServer(function (req, res) {
             post = qs.parse(body);
 
             verifySlackWebhook(post);
+
+            var userID = getUserId(post);
+            console.log(userID);
+
 
             // Is a Slack user mentioned in the message? (@requestee)
             // Find user data for @requestee (e.g. does requestee exists?)
