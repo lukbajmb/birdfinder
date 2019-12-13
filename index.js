@@ -56,16 +56,14 @@ function verifySlackWebhook(body) {
     }
 }
 
-async function findRequesteeData(body) {
-    var requesteeRaw = body.text;
+async function findRequesteeData(post) {
+    let userId = getRequesteeSlackUserId(post.text);
 
-    // parse requesteeRaw to Slack User ID
-
-    let userId = "U04FNFFDT";
+    // let userId = "U04FNFFDT";
 
     let userData = await requestSlackUserData(userId);
     if (userData != false) {
-        console.log(userData);
+        // console.log(userData);
 
         return userData;
     } else {
@@ -218,6 +216,27 @@ function sendSlackMessageToChannel(slackChannel, slackMessage, pin_message) {
         });
 }
 
+function getRequesteeSlackUserId(text) {
+    var requesteeId = '';
+    try {
+        requesteeId = text
+            .split("<@")[1]
+            .split("|")[0];
+    } catch (e) {
+        console.log(text, e);
+    }
+
+    return requesteeId;
+}
+
+function respondWithMessage(res, message) {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.write(JSON.stringify({
+        text: message
+    }));
+    res.end();
+}
+
 http.createServer(function (req, res) {
     try {
         verifyPostRequest(req.method);
@@ -234,10 +253,6 @@ http.createServer(function (req, res) {
 
             verifySlackWebhook(post);
 
-
-
-            // Is a Slack user mentioned in the message? (@requestee)
-            // Find user data for @requestee (e.g. does requestee exists?)
             // Which data is available?
             // Parse data and concatenated message back to requester
 
@@ -249,9 +264,14 @@ http.createServer(function (req, res) {
 
             // var incidentChannelId = await createIncidentFlow(post);
 
-            var RequesteeData = await findRequesteeData(post);
+            var requesteeData = await findRequesteeData(post);
 
-            console.log(RequesteeData);
+            if (requesteeData === undefined) {
+                respondWithMessage(res, "No Slack user found with this username. Try again");
+                return;
+            }
+
+            console.log(requesteeData);
 
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.write(JSON.stringify({
