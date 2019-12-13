@@ -28,8 +28,6 @@ function verifySlackWebhook(body) {
 }
 
 async function findSlackUserData(userId) {
-    // let userId = "U04FNFFDT";
-
     let userData = await requestSlackUserData(userId);
     if (userData !== undefined) {
         return userData;
@@ -54,15 +52,11 @@ async function requestSlackUserData(userId) {
     });
 }
 
-function sendSlackMessageToChannel(slackChannel, slackMessage, pin_message) {
-    if (process.env.DRY_RUN) {
-        console.log("Sending message below to channel " + slackChannel);
-        console.log(slackMessage);
-        return;
-    }
-    const newMessage = {
-        ...slackMessage,
-        channel: slackChannel
+function sendSlackPostMessage(slackChannel, slackMessageContent) {
+    const slackMessage = {
+        channel: slackChannel,
+        username: 'BirdFinder Bot',
+        text: slackMessageContent
     };
 
     request.post({
@@ -70,7 +64,7 @@ function sendSlackMessageToChannel(slackChannel, slackMessage, pin_message) {
             auth: {
                 'bearer': process.env.SLACK_API_TOKEN
             },
-            json: newMessage
+            json: slackMessage
         },
         function (error, response, body) {
             if (error) {
@@ -182,7 +176,6 @@ http.createServer(function (req, res) {
             // v3: Find user data of @requester?
             // v3: Has requester filled in all details?
 
-            // var incidentChannelId = await createIncidentFlow(post);
             let requesteeUserId = getRequesteeSlackUserId(post.text);
             if (requesteeUserId === undefined) {
                 respondWithMessage(res, {
@@ -200,7 +193,10 @@ http.createServer(function (req, res) {
             }
             let requesteeCustomFields = getUserCustomFields(requesteeData);
             console.log(requesteeCustomFields);
-
+            let requesteeMissingData = false;
+            if (requesteeMissingData) {
+               sendSlackPostMessage(requesteeData.id, "Whoop whoop");
+            }
 
             let requestorData = await findSlackUserData(post.user_id);
             let requestorCustomFields = getUserCustomFields(requestorData);
