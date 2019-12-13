@@ -110,7 +110,7 @@ function buildReplyMessage(userData, userCustomFields) {
         fieldItems.push("has a desk at the " + userCustomFields.officeFloor + " floor");
     }
 
-    return formatArrayWithCommasAndAnd(fieldItems);
+    return message + formatArrayWithCommasAndAnd(fieldItems);
 }
 
 function respondWithMessage(res, messageObject) {
