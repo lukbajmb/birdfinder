@@ -119,7 +119,7 @@ function getUserCustomFields(slackUserData) {
         title: '',
         orgName:'',
         officeLocation: '',
-        floor: ''};
+        officeFloor: ''};
 
     if (slackUserData.profile.title !== undefined) {
         userCustomFields.title = slackUserData.profile.title;
