@@ -56,8 +56,8 @@ function verifySlackWebhook(body) {
     }
 }
 
-async function findRequesteeData(post) {
-    let userId = getRequesteeSlackUserId(post.text);
+async function findSlackUserData(userId) {
+    // let userId = "U04FNFFDT";
 
     let userData = await requestSlackUserData(userId);
     if (userData !== undefined) {
@@ -137,16 +137,7 @@ function getRequesteeSlackUserId(text) {
     } catch (e) {
         console.log(text, e);
     }
-
     return requesteeId;
-}
-
-function respondWithMessage(res, message) {
-    res.writeHead(200, {'Content-Type': 'application/json'});
-    res.write(JSON.stringify({
-        text: message
-    }));
-    res.end();
 }
 
 function buildReplyMessage(post, requesteeData) {
@@ -172,6 +163,14 @@ function buildReplyMessage(post, requesteeData) {
     message = message.replace(/,\s*$/, "");
 
     return message;
+}
+
+function respondWithMessage(res, message) {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.write(JSON.stringify({
+        text: message
+    }));
+    res.end();
 }
 
 http.createServer(function (req, res) {
@@ -200,19 +199,21 @@ http.createServer(function (req, res) {
             // v3: Has requester filled in all details?
 
             // var incidentChannelId = await createIncidentFlow(post);
-
-            var requesteeData = await findRequesteeData(post);
+            var requesteeData = await findSlackUserData(getRequesteeSlackUserId(post.text));
+            console.log("requesteeData");
+            console.log(requesteeData);
+            var requestorData = await findSlackUserData(post.user_id);
+            console.log("requestorData");
+            console.log(requestorData);
 
             if (requesteeData === undefined) {
                 respondWithMessage(res, "No Slack user found with this username. Try again");
                 return;
             }
 
-            let replyMessageAboutRequestee = buildReplyMessage(post, requesteeData);
-
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.write(JSON.stringify({
-                text: replyMessageAboutRequestee
+                text: buildReplyMessage(post, requesteeData)
             }));
             res.end();
         });
