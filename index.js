@@ -60,9 +60,7 @@ async function findSlackUserData(userId) {
     // let userId = "U04FNFFDT";
 
     let userData = await requestSlackUserData(userId);
-    if (userData != false) {
-        // console.log(userData);
-
+    if (userData !== undefined) {
         return userData;
     } else {
         console.log('User for UserId %s not found', userId);
@@ -83,8 +81,6 @@ async function requestSlackUserData(userId) {
     })
     .catch(function (err) {
         console.log(err);
-
-        return false;
     });
 }
 
