@@ -108,9 +108,7 @@ function buildReplyMessage(userData, userCustomFields) {
         message += "at the " + userCustomFields.officeFloor + " floor";
     }
 
-    message = message.replace(/,\s*$/, "");
-
-    return message;
+    return message.replace(/,\s*$/, "");
 }
 
 function respondWithMessage(res, messageObject) {
