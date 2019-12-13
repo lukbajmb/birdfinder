@@ -55,7 +55,7 @@ function sendSlackPostMessage(slackChannel, slackMessageContent) {
     const slackMessage = {
         channel: slackChannel,
         username: 'BirdFinder Bot',
-        icon_emoji: ':bird',
+        icon_emoji: ':bird:',
         text: slackMessageContent
     };
 
