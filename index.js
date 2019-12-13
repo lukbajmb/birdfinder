@@ -59,8 +59,6 @@ function verifySlackWebhook(body) {
 async function findRequesteeData(post) {
     let userId = getRequesteeSlackUserId(post.text);
 
-    // let userId = "U04FNFFDT";
-
     let userData = await requestSlackUserData(userId);
     if (userData !== undefined) {
         return userData;
@@ -80,8 +78,7 @@ async function requestSlackUserData(userId) {
         json: true
     }).then(function (res) {
         return res.user;
-    })
-    .catch(function (err) {
+    }).catch(function (err) {
         console.log(err);
     });
 }
