@@ -156,6 +156,31 @@ function respondWithMessage(res, message) {
     res.end();
 }
 
+function buildReplyMessage(post, requesteeData) {
+    let message = "Hi! I asked a bit around about " + requesteeData.real_name +
+        " and found out that " + requesteeData.real_name + " is ";
+
+    if (requesteeData.profile.title !== undefined) {
+        message += "a " + requesteeData.profile.title + ", ";
+    }
+
+    if (requesteeData.profile.fields[OrganisationFieldName].value !== undefined) {
+        message += "in " + requesteeData.profile.fields[OrganisationFieldName].value + ", ";
+    }
+
+    if (requesteeData.profile.fields[OfficeLocationFieldName].value !== undefined) {
+        message += "located in " + requesteeData.profile.fields[OfficeLocationFieldName].value + ", ";
+    }
+
+    if (requesteeData.profile.fields[OfficeFloorFieldName].value !== undefined) {
+        message += "at the " + requesteeData.profile.fields[OfficeFloorFieldName].value + " floor";
+    }
+
+    message = message.replace(/,\s*$/, "");
+
+    return message;
+}
+
 http.createServer(function (req, res) {
     try {
         verifyPostRequest(req.method);
@@ -190,11 +215,11 @@ http.createServer(function (req, res) {
                 return;
             }
 
-            console.log(requesteeData);
+            let replyMessageAboutRequestee = buildReplyMessage(post, requesteeData);
 
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.write(JSON.stringify({
-                text: "Received your request"
+                text: replyMessageAboutRequestee
             }));
             res.end();
         });
