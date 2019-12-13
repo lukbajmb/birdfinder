@@ -163,16 +163,27 @@ function getUserCustomFields(slackUserData) {
         userCustomFields.title = slackUserData.profile.title;
     }
 
-    if (slackUserData.profile.fields[OrganisationFieldName].value !== undefined) {
-        userCustomFields.orgname = slackUserData.profile.fields[OrganisationFieldName].value;
+    try {
+        if (slackUserData.profile.fields[OrganisationFieldName].value !== undefined) {
+            userCustomFields.orgname = slackUserData.profile.fields[OrganisationFieldName].value;
+        }
+    } catch (e) {
+        // ignore
     }
 
-    if (slackUserData.profile.fields[OfficeLocationFieldName].value !== undefined) {
-        userCustomFields.officeLocation = slackUserData.profile.fields[OfficeLocationFieldName].value;
+    try {
+        if (slackUserData.profile.fields[OfficeLocationFieldName].value !== undefined) {
+            userCustomFields.officeLocation = slackUserData.profile.fields[OfficeLocationFieldName].value;
+        }
+    } catch (e) {
+        // ignore
     }
-
-    if (slackUserData.profile.fields[OfficeFloorFieldName].value !== undefined) {
-        userCustomFields.floor = slackUserData.profile.fields[OfficeFloorFieldName].value;
+    try {
+        if (slackUserData.profile.fields[OfficeFloorFieldName].value !== undefined) {
+            userCustomFields.floor = slackUserData.profile.fields[OfficeFloorFieldName].value;
+        }
+    } catch (e) {
+        // ignore
     }
 
     return userCustomFields;
