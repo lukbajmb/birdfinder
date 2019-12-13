@@ -198,15 +198,22 @@ http.createServer(function (req, res) {
 
             verifySlackWebhook(post);
 
-            var incidentChannelId = await createIncidentFlow(post);
+            // Is a Slack user mentioned in the message? (@requestee)
+            // Find user data for @requestee (e.g. does requestee exists?)
+            // Which data is available?
+            // Parse data and concatenated message back to requester
 
-            console.log('Successful execution of incident flow');
+            // v2: When not all data is available for requestee, ask the requester if requestee should be informed about this
+            // v2: Inform requestee to fill in more data
+
+            // v3: Find user data of @requester?
+            // v3: Has requester filled in all details?
+
+            // var incidentChannelId = await createIncidentFlow(post);
 
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.write(JSON.stringify({
-                // text: "Incident management process started. Join incident channel: #"+incidentChannel,
-                text: "Incident management process started. Join incident channel: slack://channel?team=" + process.env.SLACK_TEAM_ID + "&id=" + incidentChannelId,
-                incident_channel_id: incidentChannelId
+                text: "Received your request"
             }));
             res.end();
         });
