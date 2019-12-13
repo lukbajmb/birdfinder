@@ -268,6 +268,7 @@ http.createServer(function (req, res) {
                 replyObject.blocks.push({
                     "type": "section",
                     "text": {
+                        "type": "mrkdwn",
                         "text": "By the way, I see that you are missing " + requestorMissingFields + ' ' +
                             'information from your profile. How about filling it now? It\'s easy, just click on ' +
                             'https://messagebird.slack.com/account/profile'
