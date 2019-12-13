@@ -11,35 +11,6 @@ const OfficeLocationFieldName = 'Xf58HHDEJV';
 const OfficeFloorFieldName = 'XfRNDPVBT2';
 const OrganisationFieldName = 'XfRAV9GY91';
 
-function createInitialMessage(incidentName, slackUserName, incidentSlackChannel, incidentSlackChannelId) {
-    // Prepare a rich Slack message
-    // See https://api.slack.com/docs/message-formatting
-    var slackMessage = {
-        username: 'Incident Management',
-        icon_emoji: ':warning:',
-        attachments: [],
-        link_names: true,
-        parse: 'full',
-    };
-
-    slackMessage.attachments.push({
-        color: '#8f0000',
-        title: incidentName,
-        text: "Incident Channel: #" + incidentSlackChannel,
-        "fallback": "Join Incident Channel #" + incidentSlackChannel,
-        "actions": [
-            {
-                "type": "button",
-                "text": "Join Incident Channel",
-                "url": "slack://channel?team=" + process.env.SLACK_TEAM_ID + "&id=" + incidentSlackChannelId,
-                "style": "danger"
-            }
-        ],
-        footer: `reported by @${slackUserName}`
-    });
-    return slackMessage;
-}
-
 function verifyPostRequest(method) {
     if (method !== 'POST') {
         const error = new Error('Only POST requests are accepted');
