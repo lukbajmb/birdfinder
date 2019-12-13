@@ -229,10 +229,10 @@ http.createServer(function (req, res) {
             let requesteeCustomFields = getUserCustomFields(requesteeData);
 
             let requesteeMissingFields = getMissingFields(requesteeCustomFields);
-            if (requesteeMissingFields && requesteeData.id !== requestorData.id) {
+            if (requesteeMissingFields && requesteeData.id !== post.user_id) {
                 sendSlackPostMessage(
                     requesteeData.id,
-                    "Hi, Someone requested some location data about you (via `/find`), " +
+                    "Hi, Someone requested some location data about you (via `/find @" + requesteeData.name + "`), " +
                     "and it looks like you haven't filled in " + requesteeMissingFields + " in your Slack profile.\n " +
                     "It's easy, just click on https://messagebird.slack.com/account/profile"
                 );
