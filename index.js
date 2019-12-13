@@ -6,6 +6,11 @@ const request = require('request');
 const moment = require('moment');
 var rp = require('request-promise');
 
+const JoinDateFieldName = 'Xf59UWGT47';
+const OfficeLocationFieldName = 'Xf58HHDEJV';
+const OfficeFloorFieldName = 'XfRNDPVBT2';
+const OrganisationFieldName = 'XfRAV9GY91';
+
 function createInitialMessage(incidentName, slackUserName, incidentSlackChannel, incidentSlackChannelId) {
     // Prepare a rich Slack message
     // See https://api.slack.com/docs/message-formatting
@@ -33,27 +38,6 @@ function createInitialMessage(incidentName, slackUserName, incidentSlackChannel,
         footer: `reported by @${slackUserName}`
     });
     return slackMessage;
-}
-
-function sendIncidentLogFileToChannel(incidentSlackChannelId, docUrl) {
-    var slackMessage = {
-        username: 'During the incident',
-        icon_emoji: ':pencil:',
-        channel: '',
-        attachments: [],
-        link_names: true,
-        parse: 'full',
-    };
-
-    // Google Doc
-    slackMessage.attachments.push({
-        color: '#3367d6',
-        title: 'Notes & Actions',
-        title_link: docUrl,
-        text: docUrl,
-        footer: 'Use this document to to maintain a timeline of key events during an incident. Document actions, and keep track of any followup items that will need to be addressed.'
-    });
-    sendSlackMessageToChannel(incidentSlackChannelId, slackMessage);
 }
 
 function verifyPostRequest(method) {
