@@ -142,20 +142,22 @@ function buildReplyMessage(requesteeData) {
     let message = "Hi! I asked a bit around about " + requesteeData.real_name +
         " and found out that " + requesteeData.real_name + " is ";
 
-    if (requesteeData.profile.title !== undefined) {
-        message += "a " + requesteeData.profile.title + ", ";
+    let userCustomFields = getUserCustomFields(requesteeData);
+
+    if (userCustomFields.title !== '') {
+        message += "a " + userCustomFields.title + ", ";
     }
 
-    if (requesteeData.profile.fields[OrganisationFieldName].value !== undefined) {
-        message += "in " + requesteeData.profile.fields[OrganisationFieldName].value + ", ";
+    if (userCustomFields.orgname !== '') {
+        message += "in " + userCustomFields.orgname + ", ";
     }
 
-    if (requesteeData.profile.fields[OfficeLocationFieldName].value !== undefined) {
-        message += "located in " + requesteeData.profile.fields[OfficeLocationFieldName].value + ", ";
+    if (userCustomFields.officeLocation !== '') {
+        message += "located in " + userCustomFields.officeLocation + ", ";
     }
 
-    if (requesteeData.profile.fields[OfficeFloorFieldName].value !== undefined) {
-        message += "at the " + requesteeData.profile.fields[OfficeFloorFieldName].value + " floor";
+    if (userCustomFields.floor  !== '') {
+        message += "at the " + userCustomFields.floor + " floor";
     }
 
     message = message.replace(/,\s*$/, "");
@@ -169,6 +171,32 @@ function respondWithMessage(res, message) {
         text: message
     }));
     res.end();
+}
+
+function getUserCustomFields(slackUserData) {
+    let userCustomFields = {
+        title: '',
+        orgname:'',
+        officeLocation: '',
+        floor: ''};
+
+    if (slackUserData.profile.title !== undefined) {
+        userCustomFields.title = slackUserData.profile.title;
+    }
+
+    if (slackUserData.profile.fields[OrganisationFieldName].value !== undefined) {
+        userCustomFields.orgname = slackUserData.profile.fields[OrganisationFieldName].value;
+    }
+
+    if (slackUserData.profile.fields[OfficeLocationFieldName].value !== undefined) {
+        userCustomFields.officeLocation = slackUserData.profile.fields[OfficeLocationFieldName].value;
+    }
+
+    if (slackUserData.profile.fields[OfficeFloorFieldName].value !== undefined) {
+        userCustomFields.floor = slackUserData.profile.fields[OfficeFloorFieldName].value;
+    }
+
+    return userCustomFields;
 }
 
 http.createServer(function (req, res) {
@@ -208,10 +236,14 @@ http.createServer(function (req, res) {
                 respondWithMessage(res, "No Slack user found with this username. Try again");
                 return;
             }
+            let requesteeCustomFields = getUserCustomFields(requesteeData);
+            console.log(requesteeCustomFields);
 
-            var requestorData = await findSlackUserData(post.user_id);
-            console.log("requestorData");
-            console.log(requestorData);
+
+            let requestorData = await findSlackUserData(post.user_id);
+            let requestorCustomFields = getUserCustomFields(requestorData);
+            console.log(requestorCustomFields);
+
 
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.write(JSON.stringify({
