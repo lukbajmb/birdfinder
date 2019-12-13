@@ -228,7 +228,7 @@ http.createServer(function (req, res) {
             if (requestorMissingFields) {
                 message += "\n\nBy the way, I see that you are missing " + requestorMissingFields + ' ' +
                     'information from your profile. How about filling it now? It\'s easy, just click on ' +
-                    ' https://messagebird.slack.com/account/profile';
+                    'https://messagebird.slack.com/account/profile';
             }
 
             respondWithMessage(res, {text: message});
