@@ -248,9 +248,7 @@ http.createServer(function (req, res) {
                 return;
             }
 
-            let requesteeCustomFields = getUserCustomFields(requesteeData);
-
-            let requesteeMissingFields = getMissingFields(requesteeCustomFields);
+            let requesteeMissingFields = getMissingFields(getUserCustomFields(requesteeData));
             if (requesteeMissingFields && requesteeData.id !== post.user_id) {
                 sendSlackPostMessage(
                     requesteeData.id,
@@ -260,17 +258,13 @@ http.createServer(function (req, res) {
                 );
             }
 
-            let requestorData = await findSlackUserData(post.user_id);
-            let requestorCustomFields = getUserCustomFields(requestorData);
-            let requestorMissingFields = getMissingFields(requestorCustomFields);
-
             let replyObject = {
                 "blocks": [
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": buildReplyMessage(requesteeData, requesteeCustomFields)
+                            "text": buildReplyMessage(requesteeData, getUserCustomFields(requesteeData))
                         },
                     }
                 ]
@@ -284,6 +278,7 @@ http.createServer(function (req, res) {
                 };
             }
 
+            let requestorMissingFields = getMissingFields(getUserCustomFields(await findSlackUserData(post.user_id)));
             if (requestorMissingFields) {
                 replyObject.blocks.push({
                     "type": "section",
