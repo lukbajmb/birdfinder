@@ -5,10 +5,10 @@ const qs = require('querystring');
 const request = require('request');
 const rp = require('request-promise');
 
-const JoinDateFieldName = 'Xf59UWGT47';
-const OfficeLocationFieldName = 'Xf58HHDEJV';
-const OfficeFloorFieldName = 'XfRNDPVBT2';
-const OrganisationFieldName = 'XfRAV9GY91';
+const slackFieldNameJoinDate = 'Xf59UWGT47';
+const slackFieldNameOfficeLocation = 'Xf58HHDEJV';
+const slackFieldNameOfficeFloor = 'XfRNDPVBT2';
+const slackFieldNameOrganisation = 'XfRAV9GY91';
 
 function verifyPostRequest(method) {
     if (method !== 'POST') {
@@ -91,7 +91,7 @@ function buildReplyMessage(requesteeData, userCustomFields) {
         message += "a " + userCustomFields.title + ", ";
     }
 
-    if (userCustomFields.orgname !== '') {
+    if (userCustomFields.orgName !== '') {
         message += "in " + userCustomFields.orgName + ", ";
     }
 
@@ -99,8 +99,8 @@ function buildReplyMessage(requesteeData, userCustomFields) {
         message += "located in " + userCustomFields.officeLocation + ", ";
     }
 
-    if (userCustomFields.floor  !== '') {
-        message += "at the " + userCustomFields.floor + " floor";
+    if (userCustomFields.officeFloor  !== '') {
+        message += "at the " + userCustomFields.officeFloor + " floor";
     }
 
     message = message.replace(/,\s*$/, "");
@@ -126,23 +126,23 @@ function getUserCustomFields(slackUserData) {
     }
 
     try {
-        if (slackUserData.profile.fields[OrganisationFieldName].value !== undefined) {
-            userCustomFields.orgName = slackUserData.profile.fields[OrganisationFieldName].value;
+        if (slackUserData.profile.fields[slackFieldNameOrganisation].value !== undefined) {
+            userCustomFields.orgName = slackUserData.profile.fields[slackFieldNameOrganisation].value;
         }
     } catch (e) {
         // ignore
     }
 
     try {
-        if (slackUserData.profile.fields[OfficeLocationFieldName].value !== undefined) {
-            userCustomFields.officeLocation = slackUserData.profile.fields[OfficeLocationFieldName].value;
+        if (slackUserData.profile.fields[slackFieldNameOfficeLocation].value !== undefined) {
+            userCustomFields.officeLocation = slackUserData.profile.fields[slackFieldNameOfficeLocation].value;
         }
     } catch (e) {
         // ignore
     }
     try {
-        if (slackUserData.profile.fields[OfficeFloorFieldName].value !== undefined) {
-            userCustomFields.floor = slackUserData.profile.fields[OfficeFloorFieldName].value;
+        if (slackUserData.profile.fields[slackFieldNameOfficeFloor].value !== undefined) {
+            userCustomFields.officeFloor = slackUserData.profile.fields[slackFieldNameOfficeFloor].value;
         }
     } catch (e) {
         // ignore
@@ -167,7 +167,7 @@ function getMissingFields(userCustomFields) {
             missingFields += ", ";
         missingFields += "office location";
     }
-    if (userCustomFields.floor === '') {
+    if (userCustomFields.officeFloor === '') {
         if (missingFields !== '')
             missingFields += " and ";
         missingFields += "floor";
