@@ -86,29 +86,31 @@ function getRequesteeSlackUserId(text) {
 
 function buildReplyMessage(userData, userCustomFields) {
     let message = "Hi! I asked a bit around about " + userData.real_name +
-        " and found out that " + (userData.profile.first_name ? userData.profile.first_name : userData.real_name) + " is ";
+        " and found out that " + (userData.profile.first_name ? userData.profile.first_name : userData.real_name) + " ";
+
+    let fieldItems = []
 
     if (userCustomFields.joinDate !== '') {
-        message += "at MessageBird since " + userCustomFields.joinDate + ", ";
+        fieldItems.push("is at MessageBird since " + userCustomFields.joinDate);
     }
 
     if (userCustomFields.title !== '') {
-        message += "has the role as " + userCustomFields.title + ", ";
+        fieldItems.push("has the role as " + userCustomFields.title);
     }
 
     if (userCustomFields.orgName !== '') {
-        message += "in " + userCustomFields.orgName + ", ";
+        fieldItems.push("is part of the " + userCustomFields.orgName + " organisation");
     }
 
     if (userCustomFields.officeLocation !== '') {
-        message += "located in " + userCustomFields.officeLocation + ", ";
+        fieldItems.push("is located in " + userCustomFields.officeLocation);
     }
 
     if (userCustomFields.officeFloor  !== '') {
-        message += "at the " + userCustomFields.officeFloor + " floor";
+        fieldItems.push("has a desk at the " + userCustomFields.officeFloor + " floor");
     }
 
-    return message.replace(/,\s*$/, "");
+    return formatArrayWithCommasAndAnd(fieldItems);
 }
 
 function respondWithMessage(res, messageObject) {
@@ -164,6 +166,10 @@ function getUserCustomFields(slackUserData) {
     return userCustomFields;
 }
 
+function formatArrayWithCommasAndAnd(items) {
+    return [items.slice(0, -1).join(', '), items.slice(-1)[0]].join(items.length < 2 ? '' : ' and ');
+}
+
 function getMissingFields(userCustomFields) {
     let missingFields = [];
 
@@ -187,7 +193,7 @@ function getMissingFields(userCustomFields) {
         return '';
     }
 
-    return [missingFields.slice(0, -1).join(', '), missingFields.slice(-1)[0]].join(missingFields.length < 2 ? '' : ' and ');
+    return formatArrayWithCommasAndAnd(missingFields);
 }
 
 http.createServer(function (req, res) {
