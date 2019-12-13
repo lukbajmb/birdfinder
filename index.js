@@ -154,6 +154,30 @@ function getUserCustomFields(slackUserData) {
     return userCustomFields;
 }
 
+function getMissingFields(userCustomFields) {
+    let missingFields = '';
+
+    if (userCustomFields.title == '') {
+        missingFields = 'title';
+    }
+    if (userCustomFields.orgname == '') {
+        if (missingFields != '')
+            missingFields += ", ";
+        missingFields += "organisation name";
+    }
+    if (userCustomFields.officeLocation == '') {
+        if (missingFields != '')
+            missingFields += ", ";
+        missingFields += "office location";
+    }
+    if (userCustomFields.floor == '') {
+        if (missingFields != '')
+            missingFields += " and ";
+        missingFields += "floor";
+    }
+    return missingFields;
+}
+
 http.createServer(function (req, res) {
     try {
         verifyPostRequest(req.method);
@@ -202,8 +226,20 @@ http.createServer(function (req, res) {
             let requestorCustomFields = getUserCustomFields(requestorData);
             console.log(requestorCustomFields);
 
+            let requestorMissingFields = getMissingFields(requestorCustomFields);
+            console.log(requestorMissingFields);
 
-            respondWithMessage(res, {text: buildReplyMessage(requesteeData)});
+            let requesteeMissingFields = getMissingFields(requesteeCustomFields);
+            console.log(requesteeMissingFields);
+
+            let message = buildReplyMessage(requesteeData);
+            if (requestorMissingFields != '') {
+                message += "\n\nBy the way, I see that you are missing " + requestorMissingFields + ' ' +
+                    'information from your profile. How about filling it now? It\'s easy, just click on ' +
+                    ' https://messagebird.slack.com/account/profile';
+            }
+
+            respondWithMessage(res, {text: message});
         });
     } catch (error) {
         console.log(error);
