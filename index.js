@@ -56,9 +56,7 @@ function verifySlackWebhook(body) {
     }
 }
 
-async function findRequesteeData(post) {
-    let userId = getRequesteeSlackUserId(post.text);
-
+async function findSlackUserData(userId) {
     // let userId = "U04FNFFDT";
 
     let userData = await requestSlackUserData(userId);
@@ -144,7 +142,6 @@ function getRequesteeSlackUserId(text) {
     } catch (e) {
         console.log(text, e);
     }
-
     return requesteeId;
 }
 
@@ -154,31 +151,6 @@ function respondWithMessage(res, message) {
         text: message
     }));
     res.end();
-}
-
-function buildReplyMessage(post, requesteeData) {
-    let message = "Hi! I asked a bit around about " + requesteeData.real_name +
-        " and found out that " + requesteeData.real_name + " is ";
-
-    if (requesteeData.profile.title !== undefined) {
-        message += "a " + requesteeData.profile.title + ", ";
-    }
-
-    if (requesteeData.profile.fields[OrganisationFieldName].value !== undefined) {
-        message += "in " + requesteeData.profile.fields[OrganisationFieldName].value + ", ";
-    }
-
-    if (requesteeData.profile.fields[OfficeLocationFieldName].value !== undefined) {
-        message += "located in " + requesteeData.profile.fields[OfficeLocationFieldName].value + ", ";
-    }
-
-    if (requesteeData.profile.fields[OfficeFloorFieldName].value !== undefined) {
-        message += "at the " + requesteeData.profile.fields[OfficeFloorFieldName].value + " floor";
-    }
-
-    message = message.replace(/,\s*$/, "");
-
-    return message;
 }
 
 http.createServer(function (req, res) {
@@ -207,19 +179,21 @@ http.createServer(function (req, res) {
             // v3: Has requester filled in all details?
 
             // var incidentChannelId = await createIncidentFlow(post);
-
-            var requesteeData = await findRequesteeData(post);
+            var requesteeData = await findSlackUserData(getRequesteeSlackUserId(post.text));
+            console.log("requesteeData");
+            console.log(requesteeData);
+            var requestorData = await findSlackUserData(post.user_id);
+            console.log("requestorData");
+            console.log(requestorData);
 
             if (requesteeData === undefined) {
                 respondWithMessage(res, "No Slack user found with this username. Try again");
                 return;
             }
 
-            let replyMessageAboutRequestee = buildReplyMessage(post, requesteeData);
-
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.write(JSON.stringify({
-                text: replyMessageAboutRequestee
+                text: "Received your request about finding " + requesteeData.real_name
             }));
             res.end();
         });
