@@ -87,8 +87,12 @@ function buildReplyMessage(requesteeData, userCustomFields) {
     let message = "Hi! I asked a bit around about " + requesteeData.real_name +
         " and found out that " + requesteeData.real_name + " is ";
 
+    if (userCustomFields.joinDate !== '') {
+        message += "at MessageBird since " + userCustomFields.joinDate + ", ";
+    }
+
     if (userCustomFields.title !== '') {
-        message += "a " + userCustomFields.title + ", ";
+        message += "has the role as " + userCustomFields.title + ", ";
     }
 
     if (userCustomFields.orgName !== '') {
@@ -117,12 +121,22 @@ function respondWithMessage(res, messageObject) {
 function getUserCustomFields(slackUserData) {
     let userCustomFields = {
         title: '',
+        joinDate: '',
         orgName:'',
         officeLocation: '',
-        officeFloor: ''};
+        officeFloor: ''
+    };
 
     if (slackUserData.profile.title !== undefined) {
         userCustomFields.title = slackUserData.profile.title;
+    }
+
+    try {
+        if (slackUserData.profile.fields[slackFieldNameJoinDate].value !== undefined) {
+            userCustomFields.joinDate = slackUserData.profile.fields[slackFieldNameJoinDate].value;
+        }
+    } catch (e) {
+        // ignore
     }
 
     try {
@@ -156,6 +170,11 @@ function getMissingFields(userCustomFields) {
 
     if (userCustomFields.title === '') {
         missingFields = 'title';
+    }
+    if (userCustomFields.joinDate === '') {
+        if (missingFields !== '')
+            missingFields += ", ";
+        missingFields = 'join date';
     }
     if (userCustomFields.orgName === '') {
         if (missingFields !== '')
@@ -215,7 +234,8 @@ http.createServer(function (req, res) {
             if (requesteeMissingFields) {
                 sendSlackPostMessage(
                     requesteeData.id,
-                    "Hi, Someone requested some location data about you, and it looks like you haven't filled in " + requesteeMissingFields + ".\n " +
+                    "Hi, Someone requested some location data about you (via `/find`), " +
+                    "and it looks like you haven't filled in " + requesteeMissingFields + " in your Slack profile.\n " +
                     "It's easy, just click on https://messagebird.slack.com/account/profile"
                 );
             }
