@@ -185,7 +185,13 @@ function sendSlackMessageToChannel(slackChannel, slackMessage, pin_message) {
 }
 
 function getRequesteeId(post) {
-    return post.text.split("<@")[1].split("|")[0];
+    var requesteeId = '';
+    try {
+        requesteeId = post.text.split("<@")[1].split("|")[0];
+    } catch (e) {
+        console.log(e);
+    }
+    return requesteeId;
 }
 
 http.createServer(function (req, res) {
@@ -205,7 +211,7 @@ http.createServer(function (req, res) {
             verifySlackWebhook(post);
 
             var requesteeId = getRequesteeId(post);
-            console.log(requesteeId);
+            console.log('requesteeId: ' + requesteeId);
 
 
 
