@@ -3,8 +3,7 @@
 const http = require('http');
 const qs = require('querystring');
 const request = require('request');
-const moment = require('moment');
-var rp = require('request-promise');
+const rp = require('request-promise');
 
 const JoinDateFieldName = 'Xf59UWGT47';
 const OfficeLocationFieldName = 'Xf58HHDEJV';
@@ -84,11 +83,9 @@ function getRequesteeSlackUserId(text) {
     }
 }
 
-function buildReplyMessage(requesteeData) {
+function buildReplyMessage(requesteeData, userCustomFields) {
     let message = "Hi! I asked a bit around about " + requesteeData.real_name +
         " and found out that " + requesteeData.real_name + " is ";
-
-    let userCustomFields = getUserCustomFields(requesteeData);
 
     if (userCustomFields.title !== '') {
         message += "a " + userCustomFields.title + ", ";
@@ -120,7 +117,7 @@ function respondWithMessage(res, messageObject) {
 function getUserCustomFields(slackUserData) {
     let userCustomFields = {
         title: '',
-        orgname:'',
+        orgName:'',
         officeLocation: '',
         floor: ''};
 
@@ -130,7 +127,7 @@ function getUserCustomFields(slackUserData) {
 
     try {
         if (slackUserData.profile.fields[OrganisationFieldName].value !== undefined) {
-            userCustomFields.orgname = slackUserData.profile.fields[OrganisationFieldName].value;
+            userCustomFields.orgName = slackUserData.profile.fields[OrganisationFieldName].value;
         }
     } catch (e) {
         // ignore
@@ -157,21 +154,21 @@ function getUserCustomFields(slackUserData) {
 function getMissingFields(userCustomFields) {
     let missingFields = '';
 
-    if (userCustomFields.title == '') {
+    if (userCustomFields.title === '') {
         missingFields = 'title';
     }
-    if (userCustomFields.orgname == '') {
-        if (missingFields != '')
+    if (userCustomFields.orgName === '') {
+        if (missingFields !== '')
             missingFields += ", ";
         missingFields += "organisation name";
     }
-    if (userCustomFields.officeLocation == '') {
-        if (missingFields != '')
+    if (userCustomFields.officeLocation === '') {
+        if (missingFields !== '')
             missingFields += ", ";
         missingFields += "office location";
     }
-    if (userCustomFields.floor == '') {
-        if (missingFields != '')
+    if (userCustomFields.floor === '') {
+        if (missingFields !== '')
             missingFields += " and ";
         missingFields += "floor";
     }
@@ -195,10 +192,6 @@ http.createServer(function (req, res) {
             verifySlackWebhook(post);
 
             // v2: When not all data is available for requestee, ask the requester if requestee should be informed about this
-            // v2: Inform requestee to fill in more data
-
-            // v3: Find user data of @requester?
-            // v3: Has requester filled in all details?
 
             let requesteeUserId = getRequesteeSlackUserId(post.text);
             if (requesteeUserId === undefined) {
@@ -215,25 +208,24 @@ http.createServer(function (req, res) {
                 });
                 return;
             }
+
             let requesteeCustomFields = getUserCustomFields(requesteeData);
-            console.log(requesteeCustomFields);
-            let requesteeMissingData = false;
-            if (requesteeMissingData) {
-               sendSlackPostMessage(requesteeData.id, "Whoop whoop");
+
+            let requesteeMissingFields = getMissingFields(requesteeCustomFields);
+            if (requesteeMissingFields) {
+                sendSlackPostMessage(
+                    requesteeData.id,
+                    "Hi, Someone requested some location data about you, and it looks like you haven't filled in " + requesteeMissingFields + ".\n " +
+                    "It's easy, just click on https://messagebird.slack.com/account/profile"
+                );
             }
 
             let requestorData = await findSlackUserData(post.user_id);
             let requestorCustomFields = getUserCustomFields(requestorData);
-            console.log(requestorCustomFields);
-
             let requestorMissingFields = getMissingFields(requestorCustomFields);
-            console.log(requestorMissingFields);
 
-            let requesteeMissingFields = getMissingFields(requesteeCustomFields);
-            console.log(requesteeMissingFields);
-
-            let message = buildReplyMessage(requesteeData);
-            if (requestorMissingFields != '') {
+            let message = buildReplyMessage(requesteeData, requesteeCustomFields);
+            if (requestorMissingFields) {
                 message += "\n\nBy the way, I see that you are missing " + requestorMissingFields + ' ' +
                     'information from your profile. How about filling it now? It\'s easy, just click on ' +
                     ' https://messagebird.slack.com/account/profile';
