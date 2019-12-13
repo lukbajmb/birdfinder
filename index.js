@@ -85,7 +85,7 @@ function getRequesteeSlackUserId(text) {
 
 function buildReplyMessage(userData, userCustomFields) {
     let message = "Hi! I asked a bit around about " + userData.real_name +
-        " and found out that " + userData.real_name + " is ";
+        " and found out that " + (userData.profile.first_name ? userData.profile.first_name : userData.real_name) + " is ";
 
     if (userCustomFields.joinDate !== '') {
         message += "at MessageBird since " + userCustomFields.joinDate + ", ";
@@ -209,8 +209,6 @@ http.createServer(function (req, res) {
             post = qs.parse(body);
 
             verifySlackWebhook(post);
-
-            // v2: When not all data is available for requestee, ask the requester if requestee should be informed about this
 
             let requesteeUserId = getRequesteeSlackUserId(post.text);
             if (requesteeUserId === undefined) {
