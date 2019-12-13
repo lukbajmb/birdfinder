@@ -56,6 +56,42 @@ function verifySlackWebhook(body) {
     }
 }
 
+async function findRequesteeData(body) {
+    var requesteeRaw = body.text;
+
+    // parse requesteeRaw to Slack User ID
+
+    let userId = "U04FNFFDT";
+
+    let userData = await requestSlackUserData(userId);
+    if (userData != false) {
+        console.log(userData);
+
+        return userData;
+    } else {
+        console.log('User for UserId %s not found', userId);
+    }
+}
+
+async function requestSlackUserData(userId) {
+    return rp({
+        url: 'https://slack.com/api/users.info',
+        qs: {
+            'user': userId,
+            'token': process.env.SLACK_API_TOKEN
+        },
+        method: 'GET',
+        json: true
+    }).then(function (res) {
+        return res.user;
+    })
+    .catch(function (err) {
+        console.log(err);
+
+        return false;
+    });
+}
+
 async function createIncidentFlow(body) {
     var incidentId = moment().format('YYMMDDHHmm');
     var incidentName = body.text;
@@ -198,6 +234,8 @@ http.createServer(function (req, res) {
 
             verifySlackWebhook(post);
 
+
+
             // Is a Slack user mentioned in the message? (@requestee)
             // Find user data for @requestee (e.g. does requestee exists?)
             // Which data is available?
@@ -210,6 +248,10 @@ http.createServer(function (req, res) {
             // v3: Has requester filled in all details?
 
             // var incidentChannelId = await createIncidentFlow(post);
+
+            var RequesteeData = await findRequesteeData(post);
+
+            console.log(RequesteeData);
 
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.write(JSON.stringify({
