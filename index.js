@@ -167,32 +167,29 @@ function getUserCustomFields(slackUserData) {
 }
 
 function getMissingFields(userCustomFields) {
-    let missingFields = '';
+    let missingFields = [];
 
     if (userCustomFields.title === '') {
-        missingFields = 'title';
+        missingFields.push('title');
     }
     if (userCustomFields.joinDate === '') {
-        if (missingFields !== '')
-            missingFields += ", ";
-        missingFields = 'join date';
+        missingFields.push('join date');
     }
     if (userCustomFields.orgName === '') {
-        if (missingFields !== '')
-            missingFields += ", ";
-        missingFields += "organisation name";
+        missingFields.push("organisation name");
     }
     if (userCustomFields.officeLocation === '') {
-        if (missingFields !== '')
-            missingFields += ", ";
-        missingFields += "office location";
+        missingFields.push("office location");
     }
     if (userCustomFields.officeFloor === '') {
-        if (missingFields !== '')
-            missingFields += " and ";
-        missingFields += "floor";
+        missingFields.push("floor");
     }
-    return missingFields;
+
+    if (missingFields.length === 0) {
+        return '';
+    }
+
+    return [missingFields.slice(0, -1).join(', '), missingFields.slice(-1)[0]].join(missingFields.length < 2 ? '' : ' and ');
 }
 
 http.createServer(function (req, res) {
