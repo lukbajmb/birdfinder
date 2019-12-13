@@ -83,9 +83,9 @@ function getRequesteeSlackUserId(text) {
     }
 }
 
-function buildReplyMessage(requesteeData, userCustomFields) {
-    let message = "Hi! I asked a bit around about " + requesteeData.real_name +
-        " and found out that " + requesteeData.real_name + " is ";
+function buildReplyMessage(userData, userCustomFields) {
+    let message = "Hi! I asked a bit around about " + userData.real_name +
+        " and found out that " + userData.real_name + " is ";
 
     if (userCustomFields.joinDate !== '') {
         message += "at MessageBird since " + userCustomFields.joinDate + ", ";
@@ -244,14 +244,38 @@ http.createServer(function (req, res) {
             let requestorCustomFields = getUserCustomFields(requestorData);
             let requestorMissingFields = getMissingFields(requestorCustomFields);
 
-            let message = buildReplyMessage(requesteeData, requesteeCustomFields);
-            if (requestorMissingFields) {
-                message += "\n\nBy the way, I see that you are missing " + requestorMissingFields + ' ' +
-                    'information from your profile. How about filling it now? It\'s easy, just click on ' +
-                    'https://messagebird.slack.com/account/profile';
+            let replyObject = {
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": buildReplyMessage(requesteeData, requesteeCustomFields)
+                        },
+                    }
+                ]
+            };
+
+            if (requesteeData.profile.image_192 !== undefined) {
+                replyObject.blocks[0].accessory = {
+                    "type": "image",
+                    "image_url": requesteeData.profile.image_192,
+                    "alt_text": requesteeData.profile.real_name + " photo"
+                };
             }
 
-            respondWithMessage(res, {text: message});
+            if (requestorMissingFields) {
+                replyObject.blocks.push({
+                    "type": "section",
+                    "text": {
+                        "text": "By the way, I see that you are missing " + requestorMissingFields + ' ' +
+                            'information from your profile. How about filling it now? It\'s easy, just click on ' +
+                            'https://messagebird.slack.com/account/profile'
+                    }
+                });
+            }
+
+            respondWithMessage(res, replyObject);
         });
     } catch (error) {
         console.log(error);
