@@ -287,16 +287,6 @@ http.createServer(function (req, res) {
                 return;
             }
 
-            let requesteeMissingFields = getMissingFields(getUserCustomFields(requesteeData));
-            if (requesteeMissingFields && requesteeData.id !== post.user_id) {
-                sendSlackPostMessage(
-                    requesteeData.id,
-                    "Hi, Someone requested some location data about you (via `/find @" + requesteeData.profile.display_name + "`), " +
-                    "and it looks like you haven't filled in " + requesteeMissingFields + " in your Slack profile.\n " +
-                    "It's easy, just click on https://messagebird.slack.com/account/profile"
-                );
-            }
-
             let requesteeCustomFields = getUserCustomFields(requesteeData);
 
             let replyObject = {
@@ -330,8 +320,58 @@ http.createServer(function (req, res) {
                 });
             }
 
+            let requesteeMissingFields = getMissingFields(getUserCustomFields(requesteeData));
+            if (requesteeMissingFields /*&& requesteeData.id !== post.user_id*/) {
+                sendSlackPostMessage(
+                    requesteeData.id,
+                    "Hi, Someone requested some location data about you (via `/find @" + requesteeData.profile.display_name + "`), " +
+                    "and it looks like you haven't filled in " + requesteeMissingFields + " in your Slack profile.\n " +
+                    "It's easy, just click on https://messagebird.slack.com/account/profile"
+                );
+                replyObject.blocks.push({
+                    "type": "divider"
+                });
+                replyObject.blocks.push({
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Hey, in case you're interested there's possibility to get a bit more info about that birdie," +
+                            " like " + requesteeMissingFields + ". " +
+                            "How about I ask " + requesteeData.profile.display_name + " to fill it in?"
+                    }
+                });
+                replyObject.blocks.push({
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Yes, nudge",
+                                "emoji": true
+                            },
+                            "style": "primary",
+                            "value": "yes"
+                        },
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "No, leave in peace",
+                                "emoji": true
+                            },
+                            "style": "danger",
+                            "value": "no"
+                        }
+                    ]
+                });
+            }
+
             let requestorMissingFields = getMissingFields(getUserCustomFields(await findSlackUserData(post.user_id)));
             if (requestorMissingFields) {
+                replyObject.blocks.push({
+                    "type": "divider"
+                });
                 replyObject.blocks.push({
                     "type": "section",
                     "text": {
