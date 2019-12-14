@@ -280,6 +280,13 @@ http.createServer(function (req, res) {
                     "type": "divider"
                 });
                 replyObject.blocks.push({
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "There's some more to know about " + requesteeData.profile.display_name + ", like " + requesteeMissingFields + ". " +
+                            "How about I ask " + requesteeData.profile.display_name + " to fill them in?"
+                    }
+                });
+                replyObject.blocks.push({
                     "type": "actions",
                     "elements": [
                         {
