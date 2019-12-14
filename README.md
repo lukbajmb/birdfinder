@@ -1,7 +1,8 @@
 # BirdFinder
 
 This node.js app is allowing you find a colleague via a [Slack slash command](https://api.slack.com/slash-commands). The command will do the following:
-* ...
+* Display information about the requested colleague - from their Slack profile
+* Ask your colleague to fill in more data when (s)he has not filled in all of their Slack profile
 
 ## Setup
 * Deploy the app to any node.js enabled hosting environment ([Heroku?](https://www.heroku.com)), and configure the environment variables like explained below.
