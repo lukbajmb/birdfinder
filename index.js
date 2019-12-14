@@ -248,16 +248,6 @@ http.createServer(function (req, res) {
                 return;
             }
 
-            let requesteeMissingFields = getMissingFields(getUserCustomFields(requesteeData));
-            if (requesteeMissingFields && requesteeData.id !== post.user_id) {
-                sendSlackPostMessage(
-                    requesteeData.id,
-                    "Hi, Someone requested some location data about you (via `/find @" + requesteeData.profile.display_name + "`), " +
-                    "and it looks like you haven't filled in " + requesteeMissingFields + " in your Slack profile.\n " +
-                    "It's easy, just click on https://messagebird.slack.com/account/profile"
-                );
-            }
-
             let replyObject = {
                 "blocks": [
                     {
@@ -266,34 +256,7 @@ http.createServer(function (req, res) {
                             "type": "mrkdwn",
                             "text": buildReplyMessage(requesteeData, getUserCustomFields(requesteeData))
                         },
-                    },
-                    // {
-                    //     "type": "divider"
-                    // },
-                    // {
-                    //     "type": "actions",
-                    //     "elements": [
-                    //         {
-                    //             "type": "button",
-                    //             "text": {
-                    //                 "type": "plain_text",
-                    //                 "text": "Yes, nudge",
-                    //                 "emoji": true
-                    //             },
-                    //             "value": "yes"
-                    //
-                    //         },
-                    //         {
-                    //             "type": "button",
-                    //             "text": {
-                    //                 "type": "plain_text",
-                    //                 "text": "No, leave in peace",
-                    //                 "emoji": true
-                    //             },
-                    //             "value": "no"
-                    //         }
-                    //      ]
-                    // }
+                    }
                 ]
             };
 
@@ -303,6 +266,42 @@ http.createServer(function (req, res) {
                     "image_url": requesteeData.profile.image_192,
                     "alt_text": requesteeData.profile.real_name + " photo"
                 };
+            }
+
+            let requesteeMissingFields = getMissingFields(getUserCustomFields(requesteeData));
+            if (requesteeMissingFields && requesteeData.id !== post.user_id) {
+                sendSlackPostMessage(
+                    requesteeData.id,
+                    "Hi, Someone requested some location data about you (via `/find @" + requesteeData.profile.display_name + "`), " +
+                    "and it looks like you haven't filled in " + requesteeMissingFields + " in your Slack profile.\n " +
+                    "It's easy, just click on https://messagebird.slack.com/account/profile"
+                );
+                replyObject.blocks.push({
+                    "type": "divider"
+                });
+                replyObject.blocks.push({
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Yes, nudge",
+                                "emoji": true
+                            },
+                            "value": "yes"
+                        },
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "No, leave in peace",
+                                "emoji": true
+                            },
+                            "value": "no"
+                        }
+                    ]
+                });
             }
 
             let requestorMissingFields = getMissingFields(getUserCustomFields(await findSlackUserData(post.user_id)));
