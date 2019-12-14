@@ -331,7 +331,7 @@ http.createServer(function (req, res) {
                     "type": "divider"
                 });
                 replyObject.blocks.push({
-                //     "type": "section",
+                    "type": "section",
                 //     "text": {
                 //         "type": "mrkdwn",
                 //         "text": "Hey, in case you're interested there's possibility to get a bit more info about that Birdie," +
