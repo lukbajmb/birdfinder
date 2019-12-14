@@ -347,18 +347,19 @@ http.createServer(function (req, res) {
                             "type": "button",
                             "text": {
                                 "type": "plain_text",
-                                "text": "Primary Button"
+                                "text": "Yes"
                             },
                             "style": "primary",
-                            "value": "click_me_456"
+                            "value": "yes"
                         },
                         {
                             "type": "button",
                             "text": {
                                 "type": "plain_text",
-                                "text": "Link Button"
+                                "text": "No"
                             },
-                            "url": "https://api.slack.com/block-kit"
+                            "style": "danger",
+                            "value": "no"
                         }
                     ]
                 });
