@@ -338,7 +338,7 @@ http.createServer(function (req, res) {
                             " like " + requesteeMissingFields + ". " +
                             "How about I ask " + requesteeData.profile.display_name + " to fill it in?" +
                             "POST\n" +
-                            post
+                            post.text
                     }
                 });
                 replyObject.blocks.push({
