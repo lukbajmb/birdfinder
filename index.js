@@ -341,18 +341,24 @@ http.createServer(function (req, res) {
                 });
                 replyObject.blocks.push({
                     "type": "actions",
+                    "block_id": "actionblock789",
                     "elements": [
                         {
                             "type": "button",
-                            "text": "Yes, nudge",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Primary Button"
+                            },
                             "style": "primary",
-                            "value": "yes"
+                            "value": "click_me_456"
                         },
                         {
                             "type": "button",
-                            "text": "No, leave in peace",
-                            "style": "danger",
-                            "value": "no"
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Link Button"
+                            },
+                            "url": "https://api.slack.com/block-kit"
                         }
                     ]
                 });
