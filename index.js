@@ -267,9 +267,33 @@ http.createServer(function (req, res) {
                             "text": buildReplyMessage(requesteeData, getUserCustomFields(requesteeData))
                         },
                     },
-                    {
-                        "type": "divider"
-                    }
+                    // {
+                    //     "type": "divider"
+                    // },
+                    // {
+                    //     "type": "actions",
+                    //     "elements": [
+                    //         {
+                    //             "type": "button",
+                    //             "text": {
+                    //                 "type": "plain_text",
+                    //                 "text": "Yes, nudge",
+                    //                 "emoji": true
+                    //             },
+                    //             "value": "yes"
+                    //
+                    //         },
+                    //         {
+                    //             "type": "button",
+                    //             "text": {
+                    //                 "type": "plain_text",
+                    //                 "text": "No, leave in peace",
+                    //                 "emoji": true
+                    //             },
+                    //             "value": "no"
+                    //         }
+                    //      ]
+                    // }
                 ]
             };
 
@@ -283,6 +307,9 @@ http.createServer(function (req, res) {
 
             let requestorMissingFields = getMissingFields(getUserCustomFields(await findSlackUserData(post.user_id)));
             if (requestorMissingFields) {
+                replyObject.blocks.push({
+                    "type": "divider"
+                });
                 replyObject.blocks.push({
                     "type": "section",
                     "text": {
