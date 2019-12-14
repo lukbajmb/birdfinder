@@ -7,8 +7,9 @@ const rp = require('request-promise');
 
 const slackFieldNameJoinDate = 'Xf59UWGT47';
 const slackFieldNameOfficeLocation = 'Xf58HHDEJV';
-const slackFieldNameOfficeFloor = 'XfRNDPVBT2';
 const slackFieldNameOrganisation = 'XfRAV9GY91';
+const slackFieldNameOfficeFloor = 'XfRNDPVBT2';
+const slackFieldNameOfficeDesk = 'XfRRGATQCX';
 
 function verifyPostRequest(method) {
     if (method !== 'POST') {
@@ -86,9 +87,9 @@ function getRequesteeSlackUserId(text) {
 
 function buildReplyMessage(userData, userCustomFields) {
     let message = "Hi! I asked a bit around about " + userData.real_name +
-        " and found out that " + (userData.profile.first_name ? userData.profile.first_name : userData.real_name) + " ";
+        " and found out that " + userCustomFields.firstName + " ";
 
-    let fieldItems = []
+    let fieldItems = [];
 
     if (userCustomFields.joinDate !== '') {
         fieldItems.push("is at MessageBird since " + userCustomFields.joinDate);
@@ -141,11 +142,14 @@ function respondWithMessage(res, messageObject) {
 
 function getUserCustomFields(slackUserData) {
     let userCustomFields = {
+        firstName: (slackUserData.profile.first_name ? slackUserData.profile.first_name : slackUserData.real_name),
         title: '',
         joinDate: '',
         orgName:'',
         officeLocation: '',
-        officeFloor: ''
+        officeFloor: '',
+        officeFloorInt: '',
+        officeDesk: ''
     };
 
     if (slackUserData.profile.title !== undefined) {
@@ -175,9 +179,22 @@ function getUserCustomFields(slackUserData) {
     } catch (e) {
         // ignore
     }
+
     try {
         if (slackUserData.profile.fields[slackFieldNameOfficeFloor].value !== undefined) {
             userCustomFields.officeFloor = slackUserData.profile.fields[slackFieldNameOfficeFloor].value;
+
+            userCustomFields.officeFloorInt = userCustomFields.officeFloor.match("/\\d+/g");
+        }
+    } catch (e) {
+        // ignore
+    }
+    try {
+        let deskFormatCheck = new RegExp("^([a-zA-Z]+)([0-9]+)$");
+        if (slackUserData.profile.fields[slackFieldNameOfficeDesk].value !== undefined
+            && deskFormatCheck.test(slackUserData.profile.fields[slackFieldNameOfficeDesk].value)
+        ) {
+            userCustomFields.officeDesk = slackUserData.profile.fields[slackFieldNameOfficeDesk].value;
         }
     } catch (e) {
         // ignore
@@ -208,12 +225,34 @@ function getMissingFields(userCustomFields) {
     if (userCustomFields.officeFloor === '') {
         missingFields.push("floor");
     }
+    if (userCustomFields.officeDesk === '') {
+        missingFields.push("desk location");
+    }
 
     if (missingFields.length === 0) {
         return '';
     }
 
     return formatArrayWithCommasAndAnd(missingFields);
+}
+
+function createFloorPlanUrl(userCustomFields) {
+    if (!userCustomFields.officeFloor || !userCustomFields.officeDesk) {
+        return undefined;
+    }
+
+    let url = "https://docs.google.com/spreadsheets/d/1MFZPH54go_ekEEIBedfyzh1Rc5_sDDIVlF95Cbb_v_s/edit";
+
+    if (userCustomFields.officeFloor == 4) {
+        url += "#gid=924686718"
+    }
+    else if (userCustomFields.officeFloor == 5) {
+        url += "#gid=1378085707"
+    }
+
+    url += "&range=" + userCustomFields.officeDesk;
+
+    return url;
 }
 
 http.createServer(function (req, res) {
@@ -258,13 +297,15 @@ http.createServer(function (req, res) {
                 );
             }
 
+            let requesteeCustomFields = getUserCustomFields(requesteeData);
+
             let replyObject = {
                 "blocks": [
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": buildReplyMessage(requesteeData, getUserCustomFields(requesteeData))
+                            "text": buildReplyMessage(requesteeData, requesteeCustomFields)
                         },
                     }
                 ]
@@ -276,6 +317,17 @@ http.createServer(function (req, res) {
                     "image_url": requesteeData.profile.image_192,
                     "alt_text": requesteeData.profile.real_name + " photo"
                 };
+            }
+
+            let floorPlanUrl = createFloorPlanUrl(requesteeCustomFields);
+            if (floorPlanUrl !== undefined) {
+                replyObject.blocks.push({
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "<" + floorPlanUrl + "|See " + requesteeCustomFields.firstName + "'s desk on a map>"
+                    }
+                });
             }
 
             let requestorMissingFields = getMissingFields(getUserCustomFields(await findSlackUserData(post.user_id)));
