@@ -327,46 +327,44 @@ http.createServer(function (req, res) {
                     "and it looks like you haven't filled in " + requesteeMissingFields + " in your Slack profile.\n " +
                     "It's easy, just click on https://messagebird.slack.com/account/profile"
                 );
-                replyObject.blocks.push({
-                    "type": "divider"
-                });
-                replyObject.blocks.push({
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "Hey, in case you're interested there's possibility to get a bit more info about that Birdie," +
-                            " like " + requesteeMissingFields + ". " +
-                            "How about I ask " + requesteeData.profile.display_name + " to fill it in?" +
-                            "\nPOST\n" +
-                            post.text +
-                            "\nBODY\n" +
-                            body
-                    }
-                });
-                replyObject.blocks.push({
-                    "type": "actions",
-                    "block_id": "actionblock789",
-                    "elements": [
-                        {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "Yes"
-                            },
-                            "style": "primary",
-                            "value": "yes"
-                        },
-                        {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "No"
-                            },
-                            "style": "danger",
-                            "value": "no"
-                        }
-                    ]
-                });
+                // take a look at this first: https://api.slack.com/interactivity/handling
+                //
+                // replyObject.blocks.push({
+                //     "type": "divider"
+                // });
+                // replyObject.blocks.push({
+                //     "type": "section",
+                //     "text": {
+                //         "type": "mrkdwn",
+                //         "text": "Hey, in case you're interested there's possibility to get a bit more info about that Birdie," +
+                //             " like " + requesteeMissingFields + ". " +
+                //             "How about I ask " + requesteeData.profile.display_name + " to fill it in?"
+                //     }
+                // });
+                // replyObject.blocks.push({
+                //     "type": "actions",
+                //     "block_id": "actionblock789",
+                //     "elements": [
+                //         {
+                //             "type": "button",
+                //             "text": {
+                //                 "type": "plain_text",
+                //                 "text": "Yes"
+                //             },
+                //             "style": "primary",
+                //             "value": "yes"
+                //         },
+                //         {
+                //             "type": "button",
+                //             "text": {
+                //                 "type": "plain_text",
+                //                 "text": "No"
+                //             },
+                //             "style": "danger",
+                //             "value": "no"
+                //         }
+                //     ]
+                // });
             }
 
             let requestorMissingFields = getMissingFields(getUserCustomFields(await findSlackUserData(post.user_id)));
