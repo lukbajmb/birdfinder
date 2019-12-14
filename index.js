@@ -145,7 +145,7 @@ function getUserCustomFields(slackUserData) {
         firstName: (slackUserData.profile.first_name ? slackUserData.profile.first_name : slackUserData.real_name),
         title: '',
         joinDate: '',
-        orgName:'',
+        orgName: '',
         officeLocation: '',
         officeFloor: '',
         officeFloorInt: '',
@@ -245,8 +245,7 @@ function createFloorPlanUrl(userCustomFields) {
 
     if (userCustomFields.officeFloorInt == 4) {
         url += "#gid=924686718"
-    }
-    else if (userCustomFields.officeFloorInt == 5) {
+    } else if (userCustomFields.officeFloorInt == 5) {
         url += "#gid=1378085707"
     }
 
@@ -339,31 +338,24 @@ http.createServer(function (req, res) {
                             " like " + requesteeMissingFields + ". " +
                             "How about I ask " + requesteeData.profile.display_name + " to fill it in?"
                     },
-                    "attachments": [
+                    "callback_id": "nudger",
+                    "actions": [
                         {
-                            "callback_id": "nudger",
-                            "fallback": "Buttons da nat wok :'(",
-                            "title": "Would you recommend it to customers?",
-                            "color": "#3AA3E3",
-                            "attachment_type": "default",
-                            "actions": [
-                                {
-                                    "type": "button",
-                                    "text": "Yes, nudge",
-                                    //"style": "primary",
-                                    "name": "yes",
-                                    "value": "yes"
-                                },
-                                {
-                                    "type": "button",
-                                    "text": "No, leave in peace",
-                                    //"style": "danger",
-                                    "name": "no",
-                                    "value": "no"
-                                }
-                            ]
+                            "type": "button",
+                            "text": "Yes, nudge",
+                            //"style": "primary",
+                            "name": "yes",
+                            "value": "yes"
+                        },
+                        {
+                            "type": "button",
+                            "text": "No, leave in peace",
+                            //"style": "danger",
+                            "name": "no",
+                            "value": "no"
                         }
                     ]
+
                 });
             }
 
