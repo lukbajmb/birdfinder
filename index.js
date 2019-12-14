@@ -184,7 +184,7 @@ function getUserCustomFields(slackUserData) {
         if (slackUserData.profile.fields[slackFieldNameOfficeFloor].value !== undefined) {
             userCustomFields.officeFloor = slackUserData.profile.fields[slackFieldNameOfficeFloor].value;
 
-            userCustomFields.officeFloorInt = userCustomFields.officeFloor.match("/\\d+/g");
+            userCustomFields.officeFloorInt = userCustomFields.officeFloor.match(/\d+/).join([]);
         }
     } catch (e) {
         // ignore
@@ -237,16 +237,16 @@ function getMissingFields(userCustomFields) {
 }
 
 function createFloorPlanUrl(userCustomFields) {
-    if (!userCustomFields.officeFloor || !userCustomFields.officeDesk) {
+    if (!userCustomFields.officeFloorInt || !userCustomFields.officeDesk) {
         return undefined;
     }
 
     let url = "https://docs.google.com/spreadsheets/d/1MFZPH54go_ekEEIBedfyzh1Rc5_sDDIVlF95Cbb_v_s/edit";
 
-    if (userCustomFields.officeFloor == 4) {
+    if (userCustomFields.officeFloorInt == 4) {
         url += "#gid=924686718"
     }
-    else if (userCustomFields.officeFloor == 5) {
+    else if (userCustomFields.officeFloorInt == 5) {
         url += "#gid=1378085707"
     }
 
