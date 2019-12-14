@@ -184,7 +184,7 @@ function getUserCustomFields(slackUserData) {
         if (slackUserData.profile.fields[slackFieldNameOfficeFloor].value !== undefined) {
             userCustomFields.officeFloor = slackUserData.profile.fields[slackFieldNameOfficeFloor].value;
 
-            userCustomFields.officeFloorInt = userCustomFields.officeFloor.match("/\d+/g").join([]);
+            userCustomFields.officeFloorInt = userCustomFields.officeFloor.match(/\d+/).join([]);
         }
     } catch (e) {
         // ignore
@@ -243,10 +243,10 @@ function createFloorPlanUrl(userCustomFields) {
 
     let url = "https://docs.google.com/spreadsheets/d/1MFZPH54go_ekEEIBedfyzh1Rc5_sDDIVlF95Cbb_v_s/edit";
 
-    if (userCustomFields.officeFloor == 4) {
+    if (userCustomFields.officeFloorInt == 4) {
         url += "#gid=924686718"
     }
-    else if (userCustomFields.officeFloor == 5) {
+    else if (userCustomFields.officeFloorInt == 5) {
         url += "#gid=1378085707"
     }
 
