@@ -335,33 +335,41 @@ http.createServer(function (req, res) {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "Hey, in case you're interested there's possibility to get a bit more info about that birdie," +
+                        "text": "Hey, in case you're interested there's possibility to get a bit more info about that Birdie," +
                             " like " + requesteeMissingFields + ". " +
                             "How about I ask " + requesteeData.profile.display_name + " to fill it in?"
                     }
                 });
                 replyObject.blocks.push({
-                    "type": "actions",
-                    "elements": [
+                    "attachments": [
                         {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "Yes, nudge",
-                                "emoji": true
-                            },
-                            "style": "primary",
-                            "value": "yes"
-                        },
-                        {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "No, leave in peace",
-                                "emoji": true
-                            },
-                            "style": "danger",
-                            "value": "no"
+                            "callback_id": "nudger",
+                            // "fallback": "Would you recommend it to customers?",
+                            // "title": "Would you recommend it to customers?",
+                            // "color": "#3AA3E3",
+                            // "attachment_type": "default",
+                            "actions": [
+                                {
+                                    "type": "button",
+                                    "text": {
+                                        "type": "plain_text",
+                                        "text": "Yes, nudge",
+                                        "emoji": true
+                                    },
+                                    "style": "primary",
+                                    "value": "yes"
+                                },
+                                {
+                                    "type": "button",
+                                    "text": {
+                                        "type": "plain_text",
+                                        "text": "No, leave in peace",
+                                        "emoji": true
+                                    },
+                                    "style": "danger",
+                                    "value": "no"
+                                }
+                            ]
                         }
                     ]
                 });
