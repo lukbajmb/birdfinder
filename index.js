@@ -343,8 +343,8 @@ http.createServer(function (req, res) {
                         {
                             "callback_id": "nudger",
                             "fallback": "Buttons da nat wok :'(",
-                            // "title": "Would you recommend it to customers?",
-                            // "color": "#3AA3E3",
+                            "title": "Would you recommend it to customers?",
+                            "color": "#3AA3E3",
                             "attachment_type": "default",
                             "actions": [
                                 {
@@ -355,6 +355,7 @@ http.createServer(function (req, res) {
                                         "emoji": true
                                     },
                                     "style": "primary",
+                                    "name": "yes",
                                     "value": "yes"
                                 },
                                 {
@@ -365,6 +366,7 @@ http.createServer(function (req, res) {
                                         "emoji": true
                                     },
                                     "style": "danger",
+                                    "name": "no",
                                     "value": "no"
                                 }
                             ]
