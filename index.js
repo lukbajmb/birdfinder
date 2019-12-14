@@ -184,7 +184,7 @@ function getUserCustomFields(slackUserData) {
         if (slackUserData.profile.fields[slackFieldNameOfficeFloor].value !== undefined) {
             userCustomFields.officeFloor = slackUserData.profile.fields[slackFieldNameOfficeFloor].value;
 
-            userCustomFields.officeFloorInt = userCustomFields.officeFloor.match("/\\d+/g");
+            userCustomFields.officeFloorInt = userCustomFields.officeFloor.match("/\d+/g");
         }
     } catch (e) {
         // ignore
@@ -237,7 +237,7 @@ function getMissingFields(userCustomFields) {
 }
 
 function createFloorPlanUrl(userCustomFields) {
-    if (!userCustomFields.officeFloor || !userCustomFields.officeDesk) {
+    if (!userCustomFields.officeFloorInt || !userCustomFields.officeDesk) {
         return undefined;
     }
 
