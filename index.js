@@ -337,8 +337,10 @@ http.createServer(function (req, res) {
                         "text": "Hey, in case you're interested there's possibility to get a bit more info about that Birdie," +
                             " like " + requesteeMissingFields + ". " +
                             "How about I ask " + requesteeData.profile.display_name + " to fill it in?" +
-                            "POST\n" +
-                            post.text
+                            "\nPOST\n" +
+                            post.text +
+                            "\nBODY\n" +
+                            body
                     }
                 });
                 replyObject.blocks.push({
