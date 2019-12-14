@@ -331,30 +331,69 @@ http.createServer(function (req, res) {
                     "type": "divider"
                 });
                 replyObject.blocks.push({
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "Hey, in case you're interested there's possibility to get a bit more info about that Birdie," +
-                            " like " + requesteeMissingFields + ". " +
-                            "How about I ask " + requesteeData.profile.display_name + " to fill it in?"
-                    },
+                //     "type": "section",
+                //     "text": {
+                //         "type": "mrkdwn",
+                //         "text": "Hey, in case you're interested there's possibility to get a bit more info about that Birdie," +
+                //             " like " + requesteeMissingFields + ". " +
+                //             "How about I ask " + requesteeData.profile.display_name + " to fill it in?"
+                //     },
+                // {
+                    "text": "Would you like to play a game?",
+                    "attachments": [
+                    {
+                        "text": "Choose a game to play",
+                        "fallback": "You are unable to choose a game",
+                        "callback_id": "wopr_game",
+                        "color": "#3AA3E3",
+                        "attachment_type": "default",
+                        "actions": [
+                            {
+                                "name": "game",
+                                "text": "Chess",
+                                "type": "button",
+                                "value": "chess"
+                            },
+                            {
+                                "name": "game",
+                                "text": "Falken's Maze",
+                                "type": "button",
+                                "value": "maze"
+                            },
+                            {
+                                "name": "game",
+                                "text": "Thermonuclear War",
+                                "style": "danger",
+                                "type": "button",
+                                "value": "war",
+                                "confirm": {
+                                    "title": "Are you sure?",
+                                    "text": "Wouldn't you prefer a good game of chess?",
+                                    "ok_text": "Yes",
+                                    "dismiss_text": "No"
+                                }
+                            }
+                        ]
+                    }
+                ]
+                // }
                     // "callback_id": "nudger",
-                    "actions": [
-                        {
-                            "type": "button",
-                            "text": "Yes, nudge",
-                            //"style": "primary",
-                            "name": "yes",
-                            "value": "yes"
-                        },
-                        {
-                            "type": "button",
-                            "text": "No, leave in peace",
-                            //"style": "danger",
-                            "name": "no",
-                            "value": "no"
-                        }
-                    ]
+                    // "actions": [
+                    //     {
+                    //         "type": "button",
+                    //         "text": "Yes, nudge",
+                    //         //"style": "primary",
+                    //         "name": "yes",
+                    //         "value": "yes"
+                    //     },
+                    //     {
+                    //         "type": "button",
+                    //         "text": "No, leave in peace",
+                    //         //"style": "danger",
+                    //         "name": "no",
+                    //         "value": "no"
+                    //     }
+                    // ]
                 });
             }
 
