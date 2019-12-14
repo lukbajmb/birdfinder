@@ -320,7 +320,7 @@ http.createServer(function (req, res) {
             }
 
             let requesteeMissingFields = getMissingFields(getUserCustomFields(requesteeData));
-            if (requesteeMissingFields /*&& requesteeData.id !== post.user_id*/) {
+            if (requesteeMissingFields && requesteeData.id !== post.user_id) {
                 sendSlackPostMessage(
                     requesteeData.id,
                     "Hi, Someone requested some location data about you (via `/find @" + requesteeData.profile.display_name + "`), " +
