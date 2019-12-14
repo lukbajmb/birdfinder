@@ -340,18 +340,23 @@ http.createServer(function (req, res) {
                     }
                 });
                 replyObject.blocks.push({
-                    "type": "button",
-                    "text": "Yes, nudge",
-                    "style": "primary",
-                    "action_id": "yes",
-                    "value": "yes"
-                });
-                replyObject.blocks.push({
-                    "type": "button",
-                    "text": "No, leave in peace",
-                    "style": "danger",
-                    "action_id": "no",
-                    "value": "no"
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": "Yes, nudge",
+                            "style": "primary",
+                            "action_id": "yes",
+                            "value": "yes"
+                        },
+                        {
+                            "type": "button",
+                            "text": "No, leave in peace",
+                            "style": "danger",
+                            "action_id": "no",
+                            "value": "no"
+                        }
+                    ]
                 });
             }
 
