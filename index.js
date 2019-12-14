@@ -337,25 +337,24 @@ http.createServer(function (req, res) {
                         "text": "Hey, in case you're interested there's possibility to get a bit more info about that Birdie," +
                             " like " + requesteeMissingFields + ". " +
                             "How about I ask " + requesteeData.profile.display_name + " to fill it in?"
-                    }
-                    // ,
+                    },
                     // "callback_id": "nudger",
-                    // "actions": [
-                    //     {
-                    //         "type": "button",
-                    //         "text": "Yes, nudge",
-                    //         //"style": "primary",
-                    //         "name": "yes",
-                    //         "value": "yes"
-                    //     },
-                    //     {
-                    //         "type": "button",
-                    //         "text": "No, leave in peace",
-                    //         //"style": "danger",
-                    //         "name": "no",
-                    //         "value": "no"
-                    //     }
-                    // ]
+                    "actions": [
+                        {
+                            "type": "button",
+                            "text": "Yes, nudge",
+                            //"style": "primary",
+                            "name": "yes",
+                            "value": "yes"
+                        },
+                        {
+                            "type": "button",
+                            "text": "No, leave in peace",
+                            //"style": "danger",
+                            "name": "no",
+                            "value": "no"
+                        }
+                    ]
                 });
             }
 
