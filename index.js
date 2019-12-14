@@ -349,23 +349,15 @@ http.createServer(function (req, res) {
                             "actions": [
                                 {
                                     "type": "button",
-                                    "text": {
-                                        "type": "plain_text",
-                                        "text": "Yes, nudge",
-                                        "emoji": true
-                                    },
-                                    "style": "primary",
+                                    "text": "Yes, nudge",
+                                    //"style": "primary",
                                     "name": "yes",
                                     "value": "yes"
                                 },
                                 {
                                     "type": "button",
-                                    "text": {
-                                        "type": "plain_text",
-                                        "text": "No, leave in peace",
-                                        "emoji": true
-                                    },
-                                    "style": "danger",
+                                    "text": "No, leave in peace",
+                                    //"style": "danger",
                                     "name": "no",
                                     "value": "no"
                                 }
