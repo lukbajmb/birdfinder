@@ -266,6 +266,9 @@ http.createServer(function (req, res) {
                             "type": "mrkdwn",
                             "text": buildReplyMessage(requesteeData, getUserCustomFields(requesteeData))
                         },
+                    },
+                    {
+                        "type": "divider"
                     }
                 ]
             };
